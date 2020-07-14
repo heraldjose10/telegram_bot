@@ -4,7 +4,6 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from get_data import get_states_data,make_dict
 from api_token import API_TOKEN
 
-# API_TOKEN='1245888720:AAHclSI-icWWsmc5ytJDEqVUyXLc2v3hCrs'
 
 #####################################################
 def start(update,context):
