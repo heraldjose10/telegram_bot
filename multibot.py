@@ -1,6 +1,7 @@
 from telegram.ext import CommandHandler, CallbackQueryHandler,Updater,MessageHandler, Filters
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from mongo import get_states_data,make_dict
+# from mongo import get_states_data,make_dict
+from get_data import get_states_data,make_dict
 from api_token import API_TOKEN
 
 # API_TOKEN='1245888720:AAHclSI-icWWsmc5ytJDEqVUyXLc2v3hCrs'
@@ -36,9 +37,10 @@ def word_game(update,context):
 def ret_num(update,context):
     query=update.callback_query
     state=query.data
-    data=make_dict(state)
+    data=get_states_data()
+    data=data.get(state)
     query.edit_message_text(
-        text='{}\n🏥active : {}\n🦠total : {}\n💀deaths : {}\n✔recoveries : {}'.format(state,data[0].get('active'),data[0].get('total'),data[0].get('deaths'),data[0].get('recoveries')),
+        text='{}\n🏥active : {}\n🦠total : {}\n💀deaths : {}\n✔recoveries : {}'.format(state,data[0],data[1],data[2],data[3]),
         reply_markup=back_home_keyboard()
     )
 
@@ -64,9 +66,8 @@ def main_menu_keyboard():
 def first_menu_keyboard():
     names=get_states_data()
     names_list=[]
-    for i in names:
-        for j in i:
-            names_list.append([InlineKeyboardButton('{}'.format(j),callback_data='{}'.format(j))])
+    for i in names.keys():
+        names_list.append([InlineKeyboardButton('{}'.format(i),callback_data='{}'.format(i))])
     names_list.append([InlineKeyboardButton('Main menu', callback_data='main')])
     return InlineKeyboardMarkup(names_list)
 

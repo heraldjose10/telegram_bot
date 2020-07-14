@@ -15,7 +15,8 @@ def make_dict(name):
     for i in res:
         if (i.get('name')==name):
             return(i.get('data'))
-
+# print(get_states_data())
+print(make_dict('Assam'))
 
 # if __name__=='__main__':
 #     main()
