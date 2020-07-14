@@ -1,8 +1,11 @@
-from telegram.ext import CommandHandler, CallbackQueryHandler,Updater,MessageHandler, Filters
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+# A very simple Flask Hello World app for you to get started with...
+
+from telegram.ext import CommandHandler, CallbackQueryHandler,Updater,MessageHandler, Filters,Dispatcher
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup,Bot,Update
 from get_data import get_states_data
 from flask import Flask, request
-from api_token import API_TOKEN,USER
+from api_token import API_TOKEN
 import json
 import requests
 
@@ -82,7 +85,7 @@ app = Flask(__name__)
 def main():
     bot = Bot(API_TOKEN)
     dp = Dispatcher(bot, None, workers=0, use_context=True)
-    updater.dispatcher.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('start', start))
     #addhandlers
     dp.add_handler(CallbackQueryHandler(main_menu, pattern='main'))
     dp.add_handler(CallbackQueryHandler(first_menu, pattern='covid'))
@@ -91,62 +94,19 @@ def main():
     dp.add_handler(MessageHandler(Filters.text, bio))
     # start webhook
     bot.delete_webhook()
-    url = 'https://{}.pythonanywhere.com/{}'.format(USER,API_TOKEN)
+    url = 'https://{}.pythonanywhere.com/{}'.format('heraldjose111',API_TOKEN)
     bot.set_webhook(url=url)
 
     # process updates
-    @app.route('/' + TOKEN, methods=['POST'])
+    @app.route('/' + API_TOKEN, methods=['POST'])
     def webhook():
         json_string = request.stream.read().decode('utf-8')
         update = Update.de_json(json.loads(json_string), bot)
         dp.process_update(update)
         return 'ok', 200
 
-    
+
 # make sure you've inserted your app.py name
 if __name__ == "main":
     main()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-url='https://api.telegram.org/bot'+API_TOKEN+'/deleteWebhook'
-r=requests.get(url=url)
-print(r.content)
