@@ -1,5 +1,6 @@
 
 # telegram_bot
+https://t.me/godkingbot
 A simple telegram bot using python-telegram-bot library
 https://github.com/python-telegram-bot/python-telegram-bot
 # usage
@@ -12,3 +13,6 @@ To get api token go to https://core.telegram.org/bots#6-botfather
 I hosted this bot using pythonanywhere.com(limited free service for 3 months).
 Watch this video for more info on pythonanywhere bot hosting
 https://www.youtube.com/watch?v=vUgaOp-x1V0
+
+# help
+hit me at heraldjose10@gmail.com
