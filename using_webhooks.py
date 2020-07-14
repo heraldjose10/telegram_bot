@@ -1,11 +1,12 @@
 from telegram.ext import CommandHandler, CallbackQueryHandler,Updater,MessageHandler, Filters
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-# from mongo import get_states_data,make_dict
 from get_data import get_states_data
-from api_token import API_TOKEN
+from flask import Flask, request
+from api_token import API_TOKEN,USER
+import json
+import requests
 
-
-#####################################################
+#handlers
 def start(update,context):
     update.message.reply_text(main_menu_message(),reply_markup=main_menu_keyboard())
 
@@ -76,18 +77,76 @@ def back_home_keyboard():
     ]
     return InlineKeyboardMarkup(keyboard)
 
-########################################################################
-updater = Updater(API_TOKEN, use_context=True)
-updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CallbackQueryHandler(main_menu, pattern='main'))
-updater.dispatcher.add_handler(CallbackQueryHandler(first_menu, pattern='covid'))
-updater.dispatcher.add_handler(CallbackQueryHandler(word_game,pattern='word_game'))
-updater.dispatcher.add_handler(CallbackQueryHandler(ret_num))
-updater.dispatcher.add_handler(MessageHandler(Filters.text, bio))
-#add conversation handler instead of this mess
+#####################################################
+app = Flask(__name__)
+def main():
+    bot = Bot(API_TOKEN)
+    dp = Dispatcher(bot, None, workers=0, use_context=True)
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    #addhandlers
+    dp.add_handler(CallbackQueryHandler(main_menu, pattern='main'))
+    dp.add_handler(CallbackQueryHandler(first_menu, pattern='covid'))
+    dp.add_handler(CallbackQueryHandler(word_game,pattern='word_game'))
+    dp.add_handler(CallbackQueryHandler(ret_num))
+    dp.add_handler(MessageHandler(Filters.text, bio))
+    # start webhook
+    bot.delete_webhook()
+    url = 'https://{}.pythonanywhere.com/{}'.format(USER,API_TOKEN)
+    bot.set_webhook(url=url)
+
+    # process updates
+    @app.route('/' + TOKEN, methods=['POST'])
+    def webhook():
+        json_string = request.stream.read().decode('utf-8')
+        update = Update.de_json(json.loads(json_string), bot)
+        dp.process_update(update)
+        return 'ok', 200
+
+    
+# make sure you've inserted your app.py name
+if __name__ == "main":
+    main()
 
 
 
-updater.start_polling()
-updater.idle()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+url='https://api.telegram.org/bot'+API_TOKEN+'/deleteWebhook'
+r=requests.get(url=url)
+print(r.content)
